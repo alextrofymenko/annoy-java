@@ -18,7 +18,7 @@ public class ANNIndex implements AnnoyIndex {
   private final int kNodeHeaderSize = 12;
   private final int kFloatSize = 4;
 
-  private static float[] zeros = new float[40];
+  private final float[] zeros;
 
   /**
    * Construct and load an Annoy index.
@@ -29,6 +29,7 @@ public class ANNIndex implements AnnoyIndex {
   public ANNIndex(final int dimension, final String filename) throws IOException {
     init(dimension);
     load(filename);
+    this.zeros = new float[dimension];
   }
 
   private void init(final int dimension) {
@@ -149,7 +150,7 @@ public class ANNIndex implements AnnoyIndex {
       int n = top.node;
       int nDescendants = annBuf.getInt(n);
       getNodeVector(n, v);
-      if(Arrays.equals(v, ANNIndex.zeros))
+      if(Arrays.equals(v, zeros))
           continue;
       if (nDescendants == 1) {  // n_descendants
         // FIXME: does this ever happen?
@@ -171,7 +172,7 @@ public class ANNIndex implements AnnoyIndex {
     int i = 0;
     for (int nn : nearestNeighbors) {
       getItemVector(nn, v);
-      if(! Arrays.equals(v, ANNIndex.zeros)) {
+      if(! Arrays.equals(v, zeros)) {
         sortedNNs.add(new PQEntry(cosineMargin(v, queryVector), nn));
       }
     }
