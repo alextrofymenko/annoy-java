@@ -27,4 +27,10 @@ public interface AnnoyIndex {
    * @return             list of items in descending nearness to query point
    */
   List<Integer> getNearest(float[] queryVector, int nResults);
+
+  /**
+   * Warm up index by attempting to load byte
+   * buffer into physical RAM
+   */
+  void warmup();
 }

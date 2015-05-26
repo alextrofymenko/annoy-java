@@ -123,6 +123,11 @@ public class ANNIndex implements AnnoyIndex {
     return 1.0f - cosineMargin(u, v);
   }
 
+  @Override
+  public void warmup() {
+    annBuf.load();
+  }
+
   private class PQEntry implements Comparable<PQEntry> {
     PQEntry(final float margin, final int node) { this.margin = margin; this.node = node; }
     private float margin;
