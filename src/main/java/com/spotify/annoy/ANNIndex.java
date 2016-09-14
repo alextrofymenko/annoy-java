@@ -17,6 +17,7 @@ public class ANNIndex implements AnnoyIndex {
   private MappedByteBuffer annBuf;
   private final int kNodeHeaderSize = 12;
   private final int kFloatSize = 4;
+  private RandomAccessFile memoryMappedFile;
 
   private final float[] zeros;
 
@@ -42,7 +43,7 @@ public class ANNIndex implements AnnoyIndex {
   }
 
   private void load(final String filename) throws IOException {
-    RandomAccessFile memoryMappedFile = new RandomAccessFile(filename, "r");
+    memoryMappedFile = new RandomAccessFile(filename, "r");
     int fileSize = (int) memoryMappedFile.length();
     System.err.printf("%s: %d bytes\n", filename, fileSize);
 
@@ -121,6 +122,24 @@ public class ANNIndex implements AnnoyIndex {
    */
   public static float cosineDist(final float[] u, final float[] v) {
     return 1.0f - cosineMargin(u, v);
+  }
+
+  /**
+   * Closes this stream and releases any system resources associated
+   * with it. If the stream is already closed then invoking this
+   * method has no effect.
+   * <p/>
+   * <p> As noted in {@link AutoCloseable#close()}, cases where the
+   * close may fail require careful attention. It is strongly advised
+   * to relinquish the underlying resources and to internally
+   * <em>mark</em> the {@code Closeable} as closed, prior to throwing
+   * the {@code IOException}.
+   *
+   * @throws IOException if an I/O error occurs
+   */
+  @Override
+  public void close() throws IOException {
+    memoryMappedFile.close();
   }
 
   @Override
